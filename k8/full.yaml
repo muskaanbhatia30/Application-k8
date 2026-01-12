@@ -1,0 +1,182 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mern
+---
+# =========================
+# MongoDB Secret
+# =========================
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongo-secret
+  namespace: mern
+type: Opaque
+stringData:
+  MONGO_INITDB_ROOT_USERNAME: admin
+  MONGO_INITDB_ROOT_PASSWORD: password
+---
+# =========================
+# ConfigMap
+# =========================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mern-config
+  namespace: mern
+data:
+  MONGO_URI: mongodb://admin:password@mongodb:27017/employees?authSource=admin
+  REACT_APP_API_BASE_URL: http://localhost:5050/
+---
+# =========================
+# Mongo PVC
+# =========================
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+  namespace: mern
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+# =========================
+# Backend Deployment
+# =========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: mern
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: muskaan810/mern-backend:v3
+          ports:
+            - containerPort: 5050
+          envFrom:
+            - configMapRef:
+                name: mern-config
+---
+# =========================
+# Backend Service
+# =========================
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: mern
+spec:
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 5050
+      targetPort: 5050
+  type: NodePort
+---
+# =========================
+# Frontend Deployment
+# =========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: mern
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: muskaan810/mern-frontend:v2
+          ports:
+            - containerPort: 5173
+          envFrom:
+            - configMapRef:
+                name: mern-config
+---
+# =========================
+# Frontend Service
+# =========================
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: mern
+spec:
+  type: LoadBalancer
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 5173
+      targetPort: 5173
+---
+# =========================
+# MongoDB Deployment
+# =========================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  namespace: mern
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:latest
+          ports:
+            - containerPort: 27017
+          envFrom:
+            - secretRef:
+                name: mongo-secret
+          volumeMounts:
+            - mountPath: /data/db
+              name: mongo-storage
+      volumes:
+        - name: mongo-storage
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+---
+# =========================
+# MongoDB Service
+# =========================
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  namespace: mern
+spec:
+  selector:
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
