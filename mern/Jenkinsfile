@@ -12,7 +12,7 @@ pipeline{
 
             // dependency vulnerability will be checked later
             steps{
-                dir('mern'){
+                dir('mern/frontend'){
                     sh 'npm install --no-audit'
                 }
             }
