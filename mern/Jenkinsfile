@@ -1,0 +1,40 @@
+pipeline{
+    agent any
+
+    tools {
+        nodejs "nodejs"
+    }
+
+    stages{
+
+        stage('Install  dependency'){
+            options { timestamp () }
+
+            // dependency vulnerability will be checked later
+            steps{
+                sh 'npm install --no-audit'
+            }
+        }
+
+        stage('npm Dependency Audit') {
+            steps {
+                sh 'npm audit --audit-level=critical'
+            }
+        }
+
+        stage('OWASP Dependency-Check Vulnerabilities') {
+            steps {
+                dependencyCheck additionalArguments: '''
+                -o './'
+                -s './'
+                -f 'ALL'
+                --prettyPrint
+                ''', odcInstallation: 'owasp-tool'
+
+             dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+           }
+        }
+
+    }
+
+}
