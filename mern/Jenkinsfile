@@ -8,11 +8,13 @@ pipeline{
     stages{
 
         stage('Install  dependency'){
-            options { timestamp () }
+            options { timestamps () }
 
             // dependency vulnerability will be checked later
             steps{
-                sh 'npm install --no-audit'
+                dir('mern'){
+                    sh 'npm install --no-audit'
+                }
             }
         }
 
@@ -34,7 +36,6 @@ pipeline{
              dependencyCheckPublisher pattern: 'dependency-check-report.xml'
            }
         }
-
     }
 
 }
