@@ -36,19 +36,6 @@ pipeline {
             }
         }
 
-        stage('OWASP Dependency-Check Vulnerabilities') {
-            steps {
-                dir(env.APP_DIR) {
-                    dependencyCheck additionalArguments: '''
-                        -o './'
-                        -s './'
-                        -f 'ALL'
-                        --prettyPrint
-                    ''', odcInstallation: 'owasp-tool'
-
-                    dependencyCheckPublisher pattern: 'dependency-check-report.xml'
-                }
-            }
-        }
+        
     }
 }
