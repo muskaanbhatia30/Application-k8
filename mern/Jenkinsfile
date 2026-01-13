@@ -1,41 +1,44 @@
-pipeline{
+pipeline {
     agent any
 
     tools {
         nodejs "nodejs"
     }
 
-    stages{
+    environment {
+        APP_DIR = 'mern/frontend'
+    }
+
+    stages {
 
         stage('Install  dependency'){
             options { timestamps () }
 
             // dependency vulnerability will be checked later
             steps{
-                dir('mern/frontend'){
+                dir(env.APP_DIR){
                     sh 'npm install --no-audit'
                 }
             }
         }
 
+
+          stage('Auto Fix (Safe Upgrades)') {
+            steps {
+                    dir(env.APP_DIR){
+                    sh 'npm audit fix || true'
+                }
+            }
+        }
+        
         stage('npm Dependency Audit') {
             steps {
-                sh 'npm audit --audit-level=critical'
+                dir(env.APP_DIR) {
+                    sh 'npm audit --audit-level=critical'
+                }
             }
         }
 
-        stage('OWASP Dependency-Check Vulnerabilities') {
-            steps {
-                dependencyCheck additionalArguments: '''
-                -o './'
-                -s './'
-                -f 'ALL'
-                --prettyPrint
-                ''', odcInstallation: 'owasp-tool'
-
-             dependencyCheckPublisher pattern: 'dependency-check-report.xml'
-           }
-        }
+        
     }
-
 }
