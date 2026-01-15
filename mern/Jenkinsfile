@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     tools {
-        nodejs "nodejs"
+        nodejs "nodejs"   // Must match Jenkins NodeJS installation name
+        // Sonar scanner will be invoked via withSonarQubeEnv, no need to declare here
     }
 
     environment {
@@ -11,27 +12,23 @@ pipeline {
 
     stages {
 
-        stage('Install  dependency'){
-            options { timestamps () }
-
-            // dependency vulnerability will be checked later
-            steps{
-                dir(env.APP_DIR){
+        stage('Install Dependencies') {
+            steps {
+                dir(env.APP_DIR) {
                     sh 'npm install --no-audit'
                 }
             }
         }
 
-
-          stage('Auto Fix (Safe Upgrades)') {
+        stage('Auto Fix Vulnerabilities') {
             steps {
-                    dir(env.APP_DIR){
+                dir(env.APP_DIR) {
                     sh 'npm audit fix || true'
                 }
             }
         }
         
-        stage('npm Dependency Audit') {
+        stage('Security Audit Check') {
             steps {
                 dir(env.APP_DIR) {
                     sh 'npm audit --audit-level=critical'
@@ -39,6 +36,31 @@ pipeline {
             }
         }
 
-        
+        stage('Run Tests + Coverage') {
+            steps {
+                dir(env.APP_DIR) {
+                    sh 'npm test -- --coverage'
+                }
+            }
+        }
+
+        stage('SonarQube Scan') {
+            steps {
+                withSonarQubeEnv('SonarServer') {  
+                    dir(env.APP_DIR) {
+                        sh 'sonar-scanner'
+                    }
+                }
+            }
+        }
+
+        // stage('Quality Gate') {
+        //     steps {
+        //         timeout(time: 5, unit: 'MINUTES') {
+        //             waitForQualityGate abortPipeline: true
+        //         }
+        //     }
+        // }
     }
 }
+
