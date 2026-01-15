@@ -52,7 +52,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarServer') {  
                     dir(env.APP_DIR) {
-                        sh 'sonar-scanner'
+                       sh '/opt/sonar-scanner/bin/sonar-scanner'
                     }
                 }
             }
