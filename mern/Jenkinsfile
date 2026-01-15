@@ -39,11 +39,12 @@ pipeline {
         stage('Run Tests + Coverage') {
             steps {
                 dir(env.APP_DIR) {
-                    sh 'npm test -- --coverage'
+                    sh 'npm test --coverage'
                 }
             }
         }
 
+       // sonar authentication and collects code and coverage report
         stage('SonarQube Scan') {
             steps {
                 withSonarQubeEnv('SonarServer') {  
