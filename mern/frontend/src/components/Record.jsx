@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-//http://localhost:5050/
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 
 export default function Record() {
   const [form, setForm] = useState({
@@ -21,7 +20,7 @@ export default function Record() {
 
       setIsNew(false);
 
-      const response = await fetch(`${API_BASE_URL}/record/${id}`);
+      const response = await fetch(`http://localhost:5050/record/${id}`);
 
       if (!response.ok) {
         console.error(`An error has occurred: ${response.statusText}`);
@@ -51,8 +50,8 @@ export default function Record() {
 
     try {
       const url = isNew
-        ? `${API_BASE_URL}/record`
-        : `${API_BASE_URL}/record/${params.id}`;
+        ? `http://localhost:5050/record`
+        : `http://localhost:5050/record/${params.id}`;
 
       const method = isNew ? "POST" : "PATCH";
 
