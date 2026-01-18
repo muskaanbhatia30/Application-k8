@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        APP_DIR = 'mern/frontend',
+        APP_DIR = 'mern/frontend'
         AWS-credentials=credentials('aws-credentials')
         AWS_ACCOUNT_ID = credentials('ACCOUNT_ID')
         AWS_DEFAULT_REGION = 'us-east-1'
