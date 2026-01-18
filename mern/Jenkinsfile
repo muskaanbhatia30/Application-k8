@@ -76,7 +76,7 @@ pipeline {
         
         stage (" Building docker image"){
             steps{
-                dir(env.env.APP_DIR){
+                dir(env.APP_DIR){
                     sh 'docker build -t ${frontend_REPO_NAME} .'
                 }
             }
