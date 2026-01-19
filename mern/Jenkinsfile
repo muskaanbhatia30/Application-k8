@@ -93,7 +93,7 @@ pipeline {
                         aws ecr get-login-password --region ${AWS_DEFAULT_REGION} \
                         | docker login --username AWS --password-stdin ${REPOSITORY_URI}
 
-                        docker tag ${frontend_REPO_NAME} \
+                        docker tag ${frontend_REPO_NAME}:${BUILD_NUMBER} \
                             ${REPOSITORY_URI}${frontend_REPO_NAME}:${BUILD_NUMBER}
 
                         docker push ${REPOSITORY_URI}${frontend_REPO_NAME}:${BUILD_NUMBER}
