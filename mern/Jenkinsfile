@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        APP_DIR = 'mern-application-code/mern/frontend'
+        APP_DIR = 'mern/frontend'
         AWS_ACCOUNT_ID = credentials('ACCOUNT_ID')
         AWS_DEFAULT_REGION = 'us-west-2'
         frontend_REPO_NAME= 'mern-frontend'
@@ -74,10 +74,18 @@ pipeline {
             }
         }
         
-        stage (" Building docker image"){
+        stage (" Building frontend docker image"){
             steps{
                 dir(env.APP_DIR){
                     sh 'docker build -t ${frontend_REPO_NAME}:${BUILD_NUMBER} .'
+                }
+            }
+        }
+
+          stage (" Building backend docker image"){
+            steps{
+                dir(env.APP_DIR){
+                    sh 'docker build -t ${backend_REPO_NAME}:${BUILD_NUMBER} .'
                 }
             }
         }
