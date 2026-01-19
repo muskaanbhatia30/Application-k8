@@ -26,7 +26,7 @@ metadata:
   namespace: mern
 data:
   MONGO_URI: mongodb://admin:password@mongodb:27017/employees?authSource=admin
-  REACT_APP_API_BASE_URL: http://localhost:5050/
+  REACT_APP_API_BASE_URL: http://localhost:5050
 ---
 # =========================
 # Mongo PVC
@@ -63,7 +63,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: muskaan810/mern-backend:v3
+          image: muskaan810/mern-backend:v2
           ports:
             - containerPort: 5050
           envFrom:

@@ -20,7 +20,7 @@ export default function Record() {
 
       setIsNew(false);
 
-      const response = await fetch(`http://localhost:5050/record/${id}`);
+      const response = await fetch(`http://backend:5050/record/${id}`);
 
       if (!response.ok) {
         console.error(`An error has occurred: ${response.statusText}`);
@@ -50,8 +50,8 @@ export default function Record() {
 
     try {
       const url = isNew
-        ? `http://localhost:5050/record`
-        : `http://localhost:5050/record/${params.id}`;
+        ? `http://backend:5050/record`
+        : `http://backend:5050/record/${params.id}`;
 
       const method = isNew ? "POST" : "PATCH";
 

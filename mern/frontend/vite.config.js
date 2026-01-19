@@ -17,8 +17,7 @@ export default defineConfig({
     ],
 
     globals: true,
-    environment: "jsdom",
-
+    environment: "jsdom", 
     coverage: {
       provider: "v8",
       reporter: ["text", "html"]
