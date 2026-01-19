@@ -20,7 +20,7 @@ spec:
         - name: ecr-secret
       containers:
         - name: frontend
-          image: 389275957030.dkr.ecr.us-west-2.amazonaws.com/mern-frontend:40
+          image: 389275957030.dkr.ecr.us-west-2.amazonaws.com/mern-frontend:44
           ports:
             - containerPort: 5173
           envFrom:
