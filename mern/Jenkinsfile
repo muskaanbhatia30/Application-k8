@@ -115,30 +115,31 @@ pipeline {
             }
         }
 
-        // stage("Updating  deployment file"){
-        //      environment {
-        //         GIT_REPO_NAME = "Application-k8"
-        //         GIT_USER_NAME = "muskaanbhatia30"
-        //     }
-        //     steps {
-        //         dir('Kubernetes-Manifests-file/Frontend') {
-        //             withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-        //                 sh '''
-        //                     git config user.email "2019pietcsmuskaan103@poornima.org"
-        //                     git config user.name "muskaanbhatia30"
-        //                     BUILD_NUMBER=${BUILD_NUMBER}
-        //                     echo $BUILD_NUMBER
-        //                     imageTag=$(grep -oP '(?<=frontend:)[^ ]+' deployment.yaml)
-        //                     echo $imageTag
-        //                     sed -i "s/${AWS_ECR_REPO_NAME}:${imageTag}/${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}/" deployment.yaml
-        //                     git add deployment.yaml
-        //                     git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
-        //                     git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:master
-        //                 '''
-        //             }
-        //         }
-        //     }
-        // }
+        stage("Updating frontend deployment file"){
+             environment {
+                GIT_REPO_NAME = "Application-k8"
+                GIT_USER_NAME = "muskaanbhatia30"
+            }
+            steps {
+                dir('K8/frontend') {
+                    withCredentials([string(credentialsId: 'github_token', variable: 'GITHUB_TOKEN')]) {
+                        sh '''
+                            git config user.email "2019pietcsmuskaan103@poornima.org"
+                            git config user.name "muskaanbhatia30"
+                            BUILD_NUMBER=${BUILD_NUMBER}
+                            echo "Build number: ${BUILD_NUMBER}"
+                            # Update image tag in deployment.yaml
+                            sed -i "s|mern-frontend:.*|mern-frontend:${BUILD_NUMBER}|" deployment.yaml
+                            git add deployment.yaml
+                            git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
+                            git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} feature/feature-demo
+                        '''
+                    }
+                }
+
+                
+            }
+        }
     }
 }
 

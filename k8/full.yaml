@@ -61,9 +61,11 @@ spec:
       labels:
         app: backend
     spec:
+      imagePullSecrets:
+        - name: ecr-secret
       containers:
         - name: backend
-          image: muskaan810/mern-backend:v2
+          image: 389275957030.dkr.ecr.us-west-2.amazonaws.com/mern-backend:40
           ports:
             - containerPort: 5050
           envFrom:
@@ -85,6 +87,7 @@ spec:
     - protocol: TCP
       port: 5050
       targetPort: 5050
+      nodePort: 30050
   type: NodePort
 ---
 # =========================
@@ -105,9 +108,11 @@ spec:
       labels:
         app: frontend
     spec:
+      imagePullSecrets:
+        - name: ecr-secret
       containers:
         - name: frontend
-          image: muskaan810/mern-frontend:v2
+          image: 389275957030.dkr.ecr.us-west-2.amazonaws.com/mern-frontend:40
           ports:
             - containerPort: 5173
           envFrom:
